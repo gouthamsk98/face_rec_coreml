@@ -1,5 +1,5 @@
-import cv2
 import tensorflow as tf
+import cv2
 from tensorflow.keras.preprocessing import image
 import numpy as np
 import tensorflow as tf
@@ -20,7 +20,6 @@ train_datagen = ImageDataGenerator(
     zoom_range=0.2,
     horizontal_flip=True
 )
-validation_datagen = ImageDataGenerator(rescale=1.0/255)
 train_generator = train_datagen.flow_from_directory(
     'dataset/train',
     target_size=(img_size, img_size),
@@ -28,6 +27,7 @@ train_generator = train_datagen.flow_from_directory(
     class_mode='categorical'
 )
 
+validation_datagen = ImageDataGenerator(rescale=1.0/255)
 validation_generator = validation_datagen.flow_from_directory(
     'dataset/test',
     target_size=(img_size, img_size),
@@ -35,7 +35,7 @@ validation_generator = validation_datagen.flow_from_directory(
     class_mode='categorical'
 )
 # Load the trained model
-model = tf.keras.models.load_model('face_recognition_mobilenet.h5')
+model = tf.keras.models.load_model('model.h5')
 
 # Define image size
 img_size = 224
@@ -50,13 +50,15 @@ def preprocess_frame(frame):
 
 # Get the class labels from the training data (assuming train_generator is still available)
 # If not, you can save the class indices during training and load them here
+print(train_generator.class_indices.items())
 class_labels = {v: k for k, v in train_generator.class_indices.items()}
-
-# Function to perform inference on a frame
+print(class_labels)
+# # Function to perform inference on a frame
 def predict_frame(frame):
     img_array = preprocess_frame(frame)
     predictions = model.predict(img_array)
     predicted_class = np.argmax(predictions, axis=1)
+    print(predicted_class)
     return class_labels[predicted_class[0]], predictions[0]
 
 # Open a connection to the webcam

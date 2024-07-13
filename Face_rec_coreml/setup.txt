@@ -1,0 +1,1 @@
+jupyter notebook --NotebookApp.allow_origin=* --NotebookApp.allow_remote_access=1
